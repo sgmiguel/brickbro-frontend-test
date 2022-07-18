@@ -3,25 +3,24 @@ import Head from 'next/head'
 import Image from 'next/image'
 import GoogleMapReact from 'google-map-react'
 import { useEffect, useState } from 'react'
+import styled from 'styled-components'
+import SearchForm from '../components/SearchForm'
+import Logo from '../components/Logo'
+
+const DEFAULT_ZOOM = 11
 
 const Map: NextPage = () => {
   const [center, setCenter] = useState({ lat: 0, lng: 0 })
 
-  useEffect(() => {
+  useEffect(() => handleUpdate(), [])
+
+  const handleUpdate = () => {
     const latitude = sessionStorage.getItem('latitude')
     const longitude = sessionStorage.getItem('longitude')
     setCenter({
       lat: Number(latitude),
       lng: Number(longitude)
     })
-  }, [])
-
-  const defaultProps = {
-    center: {
-      lat: 41.38719627711809,
-      lng: 2.1638462003099423
-    },
-    zoom: 11
   }
 
   return (
@@ -35,17 +34,39 @@ const Map: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <div style={{ height: '100vh', width: '100%' }}>
-          <GoogleMapReact
-            bootstrapURLKeys={{ key: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? '' }}
-            defaultCenter={center}
-            defaultZoom={defaultProps.zoom}
-          >
-          </GoogleMapReact>
-        </div>
+        <Logo />
+        <SearchForm handleUpdate={handleUpdate} />
+        <ResultWrapper>
+          <MapWrapper>
+            <GoogleMapReact
+              bootstrapURLKeys={{ key: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? '' }}
+              center={center}
+              zoom={DEFAULT_ZOOM}
+            />
+          </MapWrapper>
+          <PreviousSearches>
+            <h2>Búsquedas</h2>
+
+          </PreviousSearches>
+        </ResultWrapper>
       </main>
     </>
   )
 }
+
+const MapWrapper = styled.div`
+  display: flex;
+  height: 800px;
+`
+
+const ResultWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+`
+
+const PreviousSearches = styled.div`
+  display: flex;
+`
 
 export default Map
