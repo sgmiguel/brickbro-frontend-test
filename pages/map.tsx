@@ -149,7 +149,7 @@ const MapWrapper = styled.div`
   height: 600px;
   width: 100%;
 
-  & > div > div {
+  & > div {
     border-radius: 4px;
     box-shadow: 2px 2px 10px #d1d1d1;
   }
