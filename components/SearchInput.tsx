@@ -6,7 +6,15 @@ export default function SearchInput({ onChange }: { onChange: (option: Option) =
   return (
     <GooglePlacesAutocomplete
       apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}
-      selectProps={{ onChange }}
+      apiOptions={{
+        language: 'es',
+      }}
+      selectProps={{
+        onChange,
+        placeholder: 'Introduce una dirección...',
+        noOptionsMessage: () => 'Sin resultados',
+        loadingMessage: () => 'Buscando...',
+      }}
     />
   );
 }
