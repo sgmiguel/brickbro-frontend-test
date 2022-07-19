@@ -1,7 +1,3 @@
-
-
-
-
 export function saveSearch(name: string, latitude: string, longitude: string) {
   const searches = sessionStorage.getItem('searches')
   const searchesObject = searches ? JSON.parse(searches) : []
