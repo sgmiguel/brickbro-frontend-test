@@ -34,5 +34,5 @@ export function getPreviousSearches(): Search[] {
   const searches = sessionStorage.getItem('searches')
   if (!searches) return []
 
-  return JSON.parse(searches)
+  return JSON.parse(searches).reverse()
 }
