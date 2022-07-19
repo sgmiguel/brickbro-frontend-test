@@ -2,7 +2,7 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import GoogleMapReact from 'google-map-react'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import SearchForm from '../components/SearchForm'
 import Logo from '../components/Logo'
@@ -54,6 +54,15 @@ const Map: NextPage = () => {
     setCurrentMarker(marker)
     return marker
   }
+
+  const handleUnload = useCallback(() => {
+    sessionStorage.clear()
+  }, [])
+
+  useEffect(() => {
+    window.addEventListener('beforeunload', handleUnload)
+    return () => window.removeEventListener('beforeunload', handleUnload)
+  }, [handleUnload])
 
   if (!canRender) return (<></>)
 
