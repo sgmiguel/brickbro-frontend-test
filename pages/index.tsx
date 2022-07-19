@@ -35,6 +35,11 @@ const Main = styled.main`
   justify-content: center;
   width: 100vw;
   height: 100vh;
+
+  @media (max-width: 550px) {
+    margin: 0 5%;
+    width: auto;
+  }
 `
 
 export default Home

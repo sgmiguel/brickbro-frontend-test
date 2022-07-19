@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import SearchInput from '../components/SearchInput'
 import { useState } from 'react'
 import getLatitudeAndLongitude from '../services/get-latitude-and-longitude'
@@ -36,11 +36,12 @@ const Form = styled.form`
   align-items: center;
   gap: 10px;
   margin-top: 1rem;
+  width: 100%;
 `
 
-const SearchButton = styled.button<{mapPage: boolean}>`
+const SearchButton = styled.button<{mapPage: boolean, baseColor?: string, baseColorHover?: string}>`
   cursor: pointer;
-  background: #0063a6;
+  background: ${props => props.theme.baseColor};
   color: white;
   height: 37px;
   width: ${props => props.mapPage ? '150' : '100'}px;
@@ -49,8 +50,14 @@ const SearchButton = styled.button<{mapPage: boolean}>`
   transition: background 0.2s ease-in-out;
 
   &:hover {
-    background: #005893;
+    background: ${props => props.theme.baseColorHover};
   }
+
+  ${props => !props.mapPage && css`
+    @media (max-width: 550px) {
+      width: 150px;
+    }
+  `}
 `
 
 const SearchWrapper = styled.div<{mapPage: boolean}>`

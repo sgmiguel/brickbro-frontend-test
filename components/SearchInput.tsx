@@ -1,19 +1,19 @@
 import React from 'react';
 import GooglePlacesAutocomplete from 'react-google-places-autocomplete'
-
+import config from '../config'
 
 export default function SearchInput({ onChange }: { onChange: (option: Option) => void }) {
   return (
     <GooglePlacesAutocomplete
-      apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}
+      apiKey={config.GOOGLE_MAPS_API_KEY}
       apiOptions={{
-        language: 'es',
+        language: config.autocomplete.language,
       }}
       selectProps={{
         onChange,
-        placeholder: 'Introduce una dirección...',
-        noOptionsMessage: () => 'Sin resultados',
-        loadingMessage: () => 'Buscando...',
+        placeholder: config.autocomplete.placeholder,
+        noOptionsMessage: () => config.autocomplete.noOptionsMessage,
+        loadingMessage: () => config.autocomplete.loadingMessage
       }}
     />
   );
