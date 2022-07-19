@@ -9,17 +9,22 @@ import Logo from '../components/Logo'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons'
 import { getLastSearch, getPreviousSearches } from '../services/session-storage'
-
-const DEFAULT_ZOOM = 12
+import Router from 'next/router'
+import config from '../config'
 
 const Map: NextPage = () => {
   const [center, setCenter] = useState({ lat: 0, lng: 0 })
   const [previousSearches, setPreviousSearches] = useState<Search[]>([])
+  const [currentMarker, setCurrentMarker] = useState<google.maps.Marker>()
+  const [canRender, setCanRender] = useState(false)
 
   useEffect(() => handleUpdate(), [])
 
   const handleUpdate = () => {
     const { latitude, longitude } = getLastSearch()
+    if (!latitude || !longitude) return void Router.replace('/')
+    setCanRender(true)
+
     setCenter({
       lat: latitude,
       lng: longitude
@@ -27,7 +32,30 @@ const Map: NextPage = () => {
 
     const searches = getPreviousSearches()
     setPreviousSearches(searches)
+
+    if (!currentMarker) return
+    currentMarker.setPosition({
+      lat: latitude,
+      lng: longitude
+    })
   }
+
+  const renderMarkers = (map: google.maps.Map, maps: typeof google.maps) => {
+    const { latitude, longitude } = getLastSearch()
+    if (!latitude || !longitude) return
+
+    const marker = new maps.Marker({
+      position: {
+        lat: latitude,
+        lng: longitude
+      },
+      map
+    })
+    setCurrentMarker(marker)
+    return marker
+  }
+
+  if (!canRender) return (<></>)
 
   return (
     <>
@@ -45,9 +73,11 @@ const Map: NextPage = () => {
         <ResultWrapper>
           <MapWrapper>
             <GoogleMapReact
-              bootstrapURLKeys={{ key: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? '' }}
+              bootstrapURLKeys={{ key: config.GOOGLE_MAPS_API_KEY }}
               center={center}
-              zoom={DEFAULT_ZOOM}
+              zoom={config.map.DEFAULT_ZOOM}
+              yesIWantToUseGoogleMapApiInternals
+              onGoogleApiLoaded={({ map, maps }) => renderMarkers(map, maps)}
             />
           </MapWrapper>
           <PreviousSearches>
@@ -81,12 +111,15 @@ const ContainerDescription = styled.p`
 const MarkerIcon = styled(FontAwesomeIcon)`
   width: 16px;
   margin-right: 3px;
-  color: #0085DF;
+  color: ${props => props.theme.baseColor};
 `
 
 const Main = styled.main`
-  margin: 0px 15%;
-  margin-top: 5rem;
+  margin: 5rem 15%;
+
+  @media (max-width: 1250px) {
+    margin: 2rem 5%;
+  }
 `
 
 const Searches = styled.div`
@@ -104,7 +137,7 @@ const Search = styled.div`
 const MapWrapper = styled.div`
   display: flex;
   justify-content: center;
-  height: 800px;
+  height: 600px;
   width: 100%;
 
   & > div > div {
@@ -118,7 +151,6 @@ const ResultWrapper = styled.div`
   flex-direction: column;
   gap: 2rem;
   margin-top: 2rem;
-  margin-bottom: 5rem;
 `
 
 const PreviousSearches = styled.div`
