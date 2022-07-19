@@ -6,21 +6,27 @@ import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import SearchForm from '../components/SearchForm'
 import Logo from '../components/Logo'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faLocationDot } from '@fortawesome/free-solid-svg-icons'
+import { getLastSearch, getPreviousSearches } from '../services/session-storage'
 
 const DEFAULT_ZOOM = 11
 
 const Map: NextPage = () => {
   const [center, setCenter] = useState({ lat: 0, lng: 0 })
+  const [previousSearches, setPreviousSearches] = useState<Search[]>([])
 
   useEffect(() => handleUpdate(), [])
 
   const handleUpdate = () => {
-    const latitude = sessionStorage.getItem('latitude')
-    const longitude = sessionStorage.getItem('longitude')
+    const { latitude, longitude } = getLastSearch()
     setCenter({
-      lat: Number(latitude),
-      lng: Number(longitude)
+      lat: latitude,
+      lng: longitude
     })
+
+    const searches = getPreviousSearches()
+    setPreviousSearches(searches)
   }
 
   return (
@@ -33,7 +39,7 @@ const Map: NextPage = () => {
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main>
+      <Main>
         <Logo />
         <SearchForm handleUpdate={handleUpdate} />
         <ResultWrapper>
@@ -45,28 +51,58 @@ const Map: NextPage = () => {
             />
           </MapWrapper>
           <PreviousSearches>
-            <h2>Búsquedas</h2>
-
+            <h2>Búsquedas anteriores</h2>
+            <p>Encuentra las búsquedas que has realizado anteriormente en tu sesión actual</p>
+            <Searches>
+              {
+                previousSearches.map(search => (
+                  <Search key={search.name}>
+                    <MarkerIcon icon={faLocationDot} />
+                    <span>{search.name}</span>
+                  </Search>
+                ))
+              }
+            </Searches>
           </PreviousSearches>
         </ResultWrapper>
-      </main>
+      </Main>
     </>
   )
 }
 
+const MarkerIcon = styled(FontAwesomeIcon)`
+  width: 16px;
+`
+
+const Main = styled.main`
+  margin: 0px 15%;
+`
+
+const Searches = styled.div`
+  display: flex;
+`
+
+const Search = styled.div`
+  display: flex;
+`
+
 const MapWrapper = styled.div`
   display: flex;
+  justify-content: center;
   height: 800px;
+  width: 100%;
 `
 
 const ResultWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 2rem;
+  margin-top: 2rem;
 `
 
 const PreviousSearches = styled.div`
   display: flex;
+  flex-direction: column;
 `
 
 export default Map

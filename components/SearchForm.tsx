@@ -1,7 +1,8 @@
 import styled from 'styled-components'
 import SearchInput from '../components/SearchInput'
 import { useState } from 'react'
-import { geocodeByPlaceId, getLatLng } from 'react-google-places-autocomplete'
+import getLatitudeAndLongitude from '../services/get-latitude-and-longitude'
+import { saveSearch } from '../services/session-storage'
 
 export default function SearchForm({ handleUpdate }: { handleUpdate?: () => void }) {
   const [addressName, setAddressName] = useState<string>('')
@@ -9,10 +10,8 @@ export default function SearchForm({ handleUpdate }: { handleUpdate?: () => void
 
   const handleSubmit = async (evt: React.FormEvent) => {
     evt.preventDefault()
-    const geocodeResult = await geocodeByPlaceId(addressId)
-    const latituedAndLongitude = await getLatLng(geocodeResult[0])
-    sessionStorage.setItem('latitude', String(latituedAndLongitude.lat))
-    sessionStorage.setItem('longitude', String(latituedAndLongitude.lng))
+    const { latitude, longitude } = await getLatitudeAndLongitude(addressId)
+    saveSearch(addressName, latitude, longitude)
     if (handleUpdate) handleUpdate()
   }
 
