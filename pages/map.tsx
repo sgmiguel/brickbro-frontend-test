@@ -10,7 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faLocationDot } from '@fortawesome/free-solid-svg-icons'
 import { getLastSearch, getPreviousSearches } from '../services/session-storage'
 
-const DEFAULT_ZOOM = 11
+const DEFAULT_ZOOM = 12
 
 const Map: NextPage = () => {
   const [center, setCenter] = useState({ lat: 0, lng: 0 })
@@ -41,7 +41,7 @@ const Map: NextPage = () => {
       </Head>
       <Main>
         <Logo />
-        <SearchForm handleUpdate={handleUpdate} />
+        <SearchForm handleUpdate={handleUpdate} mapPage={true} />
         <ResultWrapper>
           <MapWrapper>
             <GoogleMapReact
@@ -51,8 +51,8 @@ const Map: NextPage = () => {
             />
           </MapWrapper>
           <PreviousSearches>
-            <h2>Búsquedas anteriores</h2>
-            <p>Encuentra las búsquedas que has realizado anteriormente en tu sesión actual</p>
+            <ContainerTitle>Búsquedas anteriores</ContainerTitle>
+            <ContainerDescription>Encuentra las búsquedas que has realizado anteriormente en tu sesión actual</ContainerDescription>
             <Searches>
               {
                 previousSearches.map(search => (
@@ -70,20 +70,35 @@ const Map: NextPage = () => {
   )
 }
 
+const ContainerTitle = styled.h2`
+  margin-bottom: 2px;
+`
+
+const ContainerDescription = styled.p`
+  font-size: 18px;
+`
+
 const MarkerIcon = styled(FontAwesomeIcon)`
   width: 16px;
+  margin-right: 3px;
+  color: #0085DF;
 `
 
 const Main = styled.main`
   margin: 0px 15%;
+  margin-top: 5rem;
 `
 
 const Searches = styled.div`
   display: flex;
+  flex-direction: column;
+  margin-top: 1rem;
+  gap: 5px;
 `
 
 const Search = styled.div`
   display: flex;
+  align-items: center;
 `
 
 const MapWrapper = styled.div`
@@ -91,6 +106,11 @@ const MapWrapper = styled.div`
   justify-content: center;
   height: 800px;
   width: 100%;
+
+  & > div > div {
+    border-radius: 4px;
+    box-shadow: 2px 2px 10px #d1d1d1;
+  }
 `
 
 const ResultWrapper = styled.div`
@@ -98,11 +118,15 @@ const ResultWrapper = styled.div`
   flex-direction: column;
   gap: 2rem;
   margin-top: 2rem;
+  margin-bottom: 5rem;
 `
 
 const PreviousSearches = styled.div`
   display: flex;
   flex-direction: column;
+  border: 1px solid #dddddd;
+  border-radius: 4px;
+  padding: 2rem;
 `
 
 export default Map
