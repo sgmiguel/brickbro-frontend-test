@@ -85,8 +85,8 @@ const Map: NextPage = () => {
             <ContainerDescription>Encuentra las búsquedas que has realizado anteriormente en tu sesión actual</ContainerDescription>
             <Searches>
               {
-                previousSearches.map(search => (
-                  <Search key={search.name}>
+                previousSearches.map((search, index) => (
+                  <Search key={index}>
                     <MarkerIcon icon={faLocationDot} />
                     <span>{search.name}</span>
                   </Search>
